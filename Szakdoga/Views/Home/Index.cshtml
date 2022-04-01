@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Szakdoga.Models.OrderCreateVM>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    @if (this.Context.User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4">Aktuális napi rendelések</h1>
+        <table id="myTable" class="table table-condensed">
+        <thead>
+           <tr>
+                 <th>
+                   Asztal
+                </th>
+                 <th>
+                    Étel név
+                </th>
+                <th>
+                   Mennyiség
+                </th>
+                 <th>
+                   Teljes
+                </th>
+                <th>
+                    Megjegyzés
+                </th>
+           </tr>
+        </thead>
+         <tbody>
+@foreach (var item in SQL.InitMSSQL().OrderFoods) 
+{
+     
+    if(item.CreatedDate.Day == DateTime.Now.Day){
+        Szakdoga.Data.Seged s = new Seged(item);
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => s.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => s.FoodName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => s.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => s.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => s.Description)
+            </td>
+        </tr>       
+}}
+    </tbody>
+    </table>
+    }
+    else
+    {
+        <h1>Üdv</h1>
+        <h2>Jelentkezz be!</h2>
+    }
+</div>
+@section Scripts{
+    <script>
+        $(document).ready( function () {
+        $('#myTable').DataTable();
+        } );
+    </script>
+}

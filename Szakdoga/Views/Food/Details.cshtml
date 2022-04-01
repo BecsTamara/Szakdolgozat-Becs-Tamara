@@ -1,0 +1,66 @@
+﻿@model Szakdoga.Models.Food.FoodDetailVM
+
+@{
+    ViewData["Title"] = "Részletek";
+}
+
+<h1>Részletek</h1>
+
+<div>
+    <h4>@Model?.Name Részletek</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FoodType.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FoodType.Name)
+        </dd>
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Adult)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayName(Model?.Adult == true ? "Igen" : "Nem")
+        </dd>
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            <span>@Model?.Price Ft</span>
+        </dd>
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Allergies)
+        </dt>
+        <dd class = "col-sm-10">
+            @foreach (var item in Model.Allergies)
+            {
+                <span>@item.Name </span>
+            }
+        </dd>
+        @if (User.IsInRole(Roles.Boss))
+        {
+            <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Enabled)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayName(Model.Enabled == true ? "Igen" : "Nem")
+            </dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Módosítás</a> |
+    <a asp-action="Index">Vissza a listára</a>
+</div>

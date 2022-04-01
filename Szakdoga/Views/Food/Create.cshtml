@@ -1,0 +1,77 @@
+﻿@model Szakdoga.Models.FoodCreateVM
+
+@{
+    ViewData["Title"] = "Új étel felvétel";
+}
+
+<h1>Új étel felvétel</h1>
+
+@*<h4>Food</h4>*@
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FoodTypeId" class="control-label"></label>
+                <select asp-for="FoodTypeId" asp-items="Model?.FoodTypes" class="form-select">
+                    <option>Válassz Kategoriát</option>
+                </select>
+                <span asp-validation-for="FoodTypeId" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Adult" /> @Html.DisplayNameFor(model => model.Adult)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input input type="number"  min="0" oninput="validity.valid||(value='');" asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Allergies" class="form-label">Allergének</label>
+                <select id="demo" name="Allergies" multiple="multiple" class="form-control" asp-items="Model?.FoodAllergyTypes">
+                </select>
+                <span asp-validation-for="Allergies" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Enabled" /> @Html.DisplayNameFor(model => model.Enabled)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Létrehozás" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Vissza a listára</a>
+</div>
+@section Styles{
+    <link type="text/css" href="~/lib/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
+}
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="~/lib/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+              $('#demo').selectpicker();
+        });
+    </script>
+}

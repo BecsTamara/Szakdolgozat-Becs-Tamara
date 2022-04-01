@@ -1,0 +1,264 @@
+﻿@model OrderCreateVM
+@{
+    ViewData["Title"] = "Order";
+}
+@section Scripts {
+ <Script type="text/javascript">
+     var Order = {
+        TableId : 0,
+        Foods : []
+
+     }
+
+  
+   $(document).ready(function() {
+        $("#Food").val(0);
+         $("#Table").val(0);
+        $("#Food").change(function () {
+            var foodId = $("#Food option:selected").val();
+            GetFoodUnitPrice(foodId);
+      });
+
+         $("input[type=text]").change(function() {
+                 CalculateSubTotal();
+          });
+
+        $("#btnAddToList").click(function(){
+            AddToOrderList();
+        });
+
+          $("#btnSaveOrder").click(function(){
+             $.ajax({
+            async: true,
+            type: 'POST',
+            dataType: 'JSON',
+            contentType: 'application/json, charset=utf-8',
+            url: '/Order/SaveOrder',
+            data: JSON.stringify(Order),
+            success: function(data){
+                alert("ok")
+            }, 
+            error:function(a) {
+             
+             if (a.status != 200){
+                   alert("Probléma merült fel mentés közben.")
+             }
+              //console.log(a)
+            }
+
+        });
+        });
+
+    });
+    
+
+    function AddToOrderList(){
+        var tblFoodList = $("#tblRestaurantItemList");
+        var Table = parseInt($("#Table option:selected").val());
+        var TableName = $("#Table option:selected").text();
+        var UnitPrice =  parseFloat($("#txtUnitPrice").val().replace(",","."));
+        var Quantity =  parseFloat($("#txtQuantity").val().replace(",","."));
+        var Discount =  parseFloat($("#txtDiscount").val().replace(",","."));
+        var FoodId = parseInt($("#Food option:selected").val());
+        var FoodName = $("#Food option:selected").text();
+        var Total = (UnitPrice * Quantity)-Discount;
+        $("#txtTotal").val(parseFloat(Total).toFixed(2).replace(".",","));
+        var Description = $("#txtDescription").val();
+        Order.TableId = Table;
+        var valami = {
+            FoodId: FoodId,
+            Quantity: Quantity,
+            Discount: Discount,
+            Description: Description
+    
+        }
+        Order.Foods.push(valami);
+        //console.log(Order);
+
+        var FoodList = "<tr><td hidden>" +
+        FoodId + "</td><td>" +
+        FoodName + "</td><td>" +
+        TableName + "</td><td>" +
+        (UnitPrice) + "</td><td>" +
+        (Quantity)  + "</td><td>" + 
+        (Discount)+ "</td><td>" +
+         (Total) +"</td><td>" +
+         (Description) + "</td><td> <input type='button' value='Eltávolítás' name='remove' class='btn btn-danger' onclick='RemoveItem(this)'/> </tr><tr>";
+      
+
+        tblFoodList.append(FoodList);
+        ResetItem();
+    }
+   
+    function ResetItem() {
+        $("#txtUnitPrice").val(' ');
+        $("#txtQuantity").val(' ');
+        $("#txtDiscount").val('0,00');
+        $("#Food").val(0);
+        $("#txtTotal").val("");
+    }
+      function RemoveItem(foodId){
+        $(foodId).closest('tr').remove();
+    }
+
+
+    function CalculateSubTotal() {
+        var UnitPrice = parseFloat($("#txtUnitPrice").val().replace(",","."));
+        var Quantity = parseFloat($("#txtQuantity").val().replace(",","."));
+        var Discount = parseFloat($("#txtDiscount").val().replace(",","."));
+
+        var Total = (UnitPrice * Quantity)-Discount;
+        //console.log(Total);
+        $("#txtTotal").val(parseFloat(Total).toFixed(2).replace(".",",")); 
+    }
+
+    function GetFoodUnitPrice(foodId) {
+
+        let data = JSON.stringify({FoodId: parseInt(foodId)});
+        //console.log (data)
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            dataType: 'JSON',
+            contentType: 'application/json, charset=utf-8',
+            url: '/Order/GetFoodUnitPrice',
+            data: data,
+            success: function(data){
+                $("#txtUnitPrice").val(data.FoodPrice);
+            }, 
+            error:function() {
+                alert("Probléma van az egységár megszerzésével.")
+            }
+
+        });
+    };
+</Script>
+}
+
+@section Styles {
+<style>
+    fieldset{
+        border:1px solid #ddd !important;
+        margin: 0;
+        xmin-width: 0;
+        padding: 10px;
+        position: relative;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+        left: 10px !important;
+    }
+    legend{
+        font-size: 14px;
+        font-weight: bold;
+       margin-bottom: 0;
+       width: 35%;
+       border: 1px solid #ddd;
+       border-radius: 4px;
+       padding: 5px 5px 5px 10px;
+       background-color: #ffffff;
+    }
+</style>
+ }
+
+<h1>Rendelések</h1>
+<fieldset>
+    <legend>
+        Rendelések
+    </legend>
+    <div class = "container">
+        <div class = "row">
+            <div class = "col-md-4">
+                <div class = "form-group">
+                   Étel:
+                    @Html.DropDownList("Food", new SelectList (Model.FoodItems, dataValueField:"Value", dataTextField:"Text"),new { @class = "form-control" })
+                </div>
+                </div>
+                <div class = "col-md-4">
+                 <div class = "form-group">
+                    Asztal:
+                    @Html.DropDownList("Table", new SelectList (Model.TableItems, dataValueField:"Value", dataTextField:"Text"),new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    Egységár:
+                    <input style="text-align: right" type="text" readonly="readonly" id="txtUnitPrice" value="0,00" name="UnitPrice" class="form-control" />
+                </div>
+            </div>
+           
+         </div>
+         <div class="row">
+              <div class = "col-md-3">
+                <div class = "form-group">
+                    Mennyiség:
+                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtQuantity" value="0,00" name="Quantity" class="form-control" minvalue=0 />
+                </div>
+            </div>
+              <div class = "col-md-3">
+                <div class = "form-group">
+                    Kedvezmény:
+                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtDiscount" value="0,00" minvalue=0 name="Discount" class="form-control" />
+                </div>
+            </div>
+             <div class = "col-md-3">
+                <div class = "form-group">
+                    Teljes:
+                    <input style="text-align: right" type="text" readonly="readonly" id="txtTotal" value="0,00" name="Total" class="form-control" />
+                </div>
+            </div>
+             <div class = "col-md-3">
+             <div class = "form-group">
+                    Megjegyzés:
+                    <input style="text-align: left" type="text" id="txtDescription"  name="Description" class="form-control" />
+                </div>
+                </div>
+            <div class = "col-md-3 ">
+                <div class = "form-group">
+                    <input type="button" style="margin-top: 20px" value="Hozzáadás a listához" name="AddToList" id="btnAddToList" class="btn btn-success" />
+                </div>
+            </div>
+         </div>
+     </div>
+</fieldset>
+<fieldset>
+    <legend>
+        Felvett rendelések
+    </legend>
+    <table style="width: 100%" id=tblRestaurantItemList>
+        <thead>
+           <tr>
+                <th hidden>
+                    Food Id
+                </th>
+                 <th>
+                    Étel név
+                </th>
+                 <th>
+                   Asztal
+                </th>
+                <th>
+                   Egységár
+                </th>
+                 <th>
+                   Mennyiség
+                </th>
+                <th>
+                   Kedvezmény
+                </th>
+                 <th>
+                   Teljes
+                </th>
+                <th>
+                    Megjegyzés
+                </th>
+                <th>
+                   
+                </th>
+           </tr>
+        </thead>
+    </table>
+</fieldset>
+<div style="margin-top: 50px">
+<input style="float: right" type="button" value="Mentés" name="save" id="btnSaveOrder" class="btn btn-primary" />
+</div>
