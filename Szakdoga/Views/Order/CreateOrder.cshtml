@@ -58,7 +58,7 @@
         var TableName = $("#Table option:selected").text();
         var UnitPrice =  parseFloat($("#txtUnitPrice").val().replace(",","."));
         var Quantity =  parseFloat($("#txtQuantity").val().replace(",","."));
-        var Discount =  parseFloat($("#txtDiscount").val().replace(",","."));
+        var Discount =  parseInt($("#txtDiscount").val().replace(",","."));
         var FoodId = parseInt($("#Food option:selected").val());
         var FoodName = $("#Food option:selected").text();
         var Total = (UnitPrice * Quantity)-Discount;
@@ -192,13 +192,13 @@
               <div class = "col-md-3">
                 <div class = "form-group">
                     Mennyiség:
-                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtQuantity" value="0,00" name="Quantity" class="form-control" minvalue=0 />
+                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtQuantity" value="0" name="Quantity" class="form-control" minvalue=0 />
                 </div>
             </div>
               <div class = "col-md-3">
                 <div class = "form-group">
                     Kedvezmény:
-                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtDiscount" value="0,00" minvalue=0 name="Discount" class="form-control" />
+                    <input style="text-align: right" input type="number"  min="0" oninput="validity.valid||(value='');" id="txtDiscount" value="0" minvalue=0 name="Discount" class="form-control" />
                 </div>
             </div>
              <div class = "col-md-3">
